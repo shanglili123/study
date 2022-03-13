@@ -1,0 +1,31 @@
+server:
+  port: 8888
+  
+spring:
+  datasource:
+     username: root
+     password: root
+     url: jdbc:mysql://localhost:3306/school?useUnicode=true&characterEncoding=utf-8&useSSL=true&autoReconnect=true&failOverReadOnly=false
+     driver-class-name: com.mysql.jdbc.Driver
+# 日志配置
+logging:
+  config: classpath:log/logback.xml
+  level:
+    study: debug
+    org.springframework: warn
+# MyBatis
+mybatis:
+    # 搜索指定包别名
+    typeAliasesPackage: study.entit
+    # 配置mapper的扫描，找到所有的mapper.xml映射文件
+    mapperLocations: classpath*:mapper/**/*Mapper.xml
+
+mapper:
+  not-empty: true  #加上此配置
+  identity: MYSQL
+# PageHelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

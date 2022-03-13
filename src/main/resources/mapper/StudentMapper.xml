@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="study.dao.StudentMapper">
+ 
+    <resultMap id="BaseResultMap" type="study.entit.Student">
+        <result column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <association property="clazz" javaType="study.entit.Clazz">
+           <id property="cid" column="cid"></id>
+            <result column="cname" property="cname"  />
+        </association>
+        <collection property="courses" ofType="study.entit.Course">
+           <id property="crid" column="crid"></id>
+           <result column="crname" property="crname"  />
+           <association property="teacher" javaType="study.entit.Teacher">
+           <id property="tid" column="tid"></id>
+            <result column="tname" property="tname"  />
+        </association>
+        </collection>
+    </resultMap>
+ 
+    <insert id="save" parameterType="Student">
+        insert into student(name,pass,insert_time) values(#{name},#{clazz.id},#{insertTime})
+    </insert>
+   <select id="findAll" resultMap="BaseResultMap">
+     select * FROM student s  , clazz c , course cr ,course_stuent cs, teacher t where 
+     s.cid=c.cid and s.id = cs.sid and cr.crid = cs.crid and cr.tid = t.tid
+   </select>
+     <select id="findById" parameterType="int" resultMap="BaseResultMap">
+      select * from student where id = #{id}
+   </select>
+</mapper>

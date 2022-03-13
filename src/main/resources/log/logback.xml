@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE xml>
+<configuration scan="true">
+    <!--引入配置文件  -->
+    <property resource="log/logback.properties" />
+	<timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss" />
+	<!-- 控制台输出 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{50} - %msg%n</pattern>
+			<!-- 是否立即清空输出流，设置为false可以提高性能，但日志可能会丢失 -->
+			<immediateFlush>true</immediateFlush>
+		</encoder>
+	</appender>
+
+	<!-- APPLICATION-APPENDER 当前应用的日志 -->
+	<appender name="APPLICATION-APPENDER"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>
+		${logback.path}/application.log
+		</file>
+		  <!-- 是否追加 默认为true -->
+        <append>true</append>
+        <!-- 滚动策略 日期+大小 策略 -->
+        <rollingPolicy
+            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logback.zip.path}/%d{yyyy-MM-dd}/application/application-%i.zip</fileNamePattern>
+            <!-- 单个日志大小 -->
+            <maxFileSize>${logback.maxFileSize}</maxFileSize>
+            <!-- 日志保存周期 -->
+            <maxHistory>${logback.maxHistory}</maxHistory>
+            <!-- 总大小 -->
+            <totalSizeCap>${logback.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+		<encoder>
+			<immediateFlush>true</immediateFlush>
+			<charset class="java.nio.charset.Charset">UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{50} - %msg%n</pattern>
+		</encoder>
+	</appender>
+   
+    <!-- error log -->
+	<appender name="ERROR-APPENDER"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<file>
+		 ${logback.path}/error.log
+		</file>
+		  <!-- 是否追加 默认为true -->
+        <append>true</append>
+        <!-- 滚动策略 日期+大小 策略 -->
+        <rollingPolicy
+            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logback.zip.path}/%d{yyyy-MM-dd}/error/error-%i.zip</fileNamePattern>
+            <!-- 单个日志大小 -->
+            <maxFileSize>${logback.maxFileSize}</maxFileSize>
+            <!-- 日志保存周期 -->
+            <maxHistory>${logback.maxHistory}</maxHistory>
+            <!-- 总大小 -->
+            <totalSizeCap>${logback.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+		<encoder>
+			<immediateFlush>false</immediateFlush>
+			<charset class="java.nio.charset.Charset">UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{50} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	
+	<!-- 
+	
+	<appender name="THIRD-PARTY-APPENDER"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/3rd-party/3rd-party_log-${bySecond}.txt
+		</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			日志文件输出的文件名
+			<FileNamePattern>${LOG_HOME}/3rd-party/3rd-party_log-%d{yyyy-MM-dd}.%i.zip</FileNamePattern>
+			日志文件保留天数
+			<MaxHistory>30</MaxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>1000MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<charset class="java.nio.charset.Charset">UTF-8</charset>
+			<ImmediateFlush>true</ImmediateFlush>
+			格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{50} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	异步输出 APPLICATION-APPENDER
+	<appender name="ASYNC-APPLICATION" class="ch.qos.logback.classic.AsyncAppender">
+		不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志
+		<discardingThreshold>0</discardingThreshold>
+		更改默认的队列的深度,该值会影响性能.默认值为256
+		<queueSize>8096</queueSize>
+		添加附加的appender,最多只能添加一个
+		<appender-ref ref="APPLICATION-APPENDER" />
+	</appender>
+    	SQL-APPENDER 记录所有sql输出日志
+	<appender name="SQL-APPENDER"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/sql/sql_log-${bySecond}.txt
+		</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			日志文件输出的文件名
+			<fileNamePattern>${LOG_HOME}/sql/sql_log-%d{yyyy-MM-dd}.%i.zip
+			</fileNamePattern>
+			日志文件保留天数
+			<maxHistory>30</maxHistory>
+			日志文件最大的大小
+			<TimeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<MaxFileSize>100MB</MaxFileSize>
+			</TimeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<immediateFlush>true</immediateFlush>
+			<charset class="java.nio.charset.Charset">UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{50} - %msg%n</pattern>
+		</encoder>
+	  </appender>
+	异步输出 SQL-APPENDER
+	<appender name="ASYNC-SQL" class="ch.qos.logback.classic.AsyncAppender">
+		不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志
+		<discardingThreshold>0</discardingThreshold>
+		更改默认的队列的深度,该值会影响性能.默认值为256
+		<queueSize>8096</queueSize>
+		添加附加的appender,最多只能添加一个
+		<appender-ref ref="SQL-APPENDER" />
+	</appender>
+ -->
+	
+
+
+	<!-- 日志输出级别 -->
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ERROR-APPENDER" />
+		<appender-ref ref="APPLICATION-APPENDER" />
+	</root>
+</configuration>
